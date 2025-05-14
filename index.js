@@ -108,7 +108,7 @@ function checkTime() {
     let hrs = date.getHours()
     let mins = date.getMinutes()
     let currTime = `${hrs}:${mins}`
-    //currTime = "00:00"
+    currTime = "00:00"
     console.log(currTime);
     //todaysDate = "2/1"; //Testing
     if (currTime === "00:00") {
@@ -117,7 +117,8 @@ function checkTime() {
     else (console.log("Not midnight yet"));
 }
 
-setInterval(checkTime, 60000)
+checkTime()
+//setInterval(checkTime, 60000)
 
 function searchQuotes(everyQuote, date) {
     let dateRegexp = new RegExp(`\\b${date}\\b`)
@@ -129,7 +130,7 @@ function searchQuotes(everyQuote, date) {
         }
     if (foundQuotes.length === 0) {
         console.log("No quotes said on " + date);
-        client.channels.cache.get('1365698163096424593').send(`No quotes said on ${date}`)
+        client.channels.cache.get('1371488654677246013').send(`No quotes said on ${date}`)
     }
     else {
         sendQuotesToChannel(foundQuotes, todaysDate);
