@@ -17,6 +17,7 @@ client.login(token);
 /*----------------------------------^Discord Bot^---------------------------------------- */
 /*--------------------------------^Google Docs API^---------------------------------------- */
 
+const fingerSimmonsID = '1371488654677246013'
 const mandemQuotesID = '1HnleC6fnhQDRynVGHI1QRg6BKKtDwjjOpKcCDLAoKLQ';
 const fs = require('fs').promises;
 const path = require('path');
@@ -130,7 +131,7 @@ function searchQuotes(everyQuote, date) {
         }
     if (foundQuotes.length === 0) {
         console.log("No quotes said on " + date);
-        client.channels.cache.get('1371488654677246013').send(`No quotes said on ${date}`)
+        client.channels.cache.get(fingerSimmonsID).send(`No quotes said on ${date}`)
     }
     else {
         sendQuotesToChannel(foundQuotes, todaysDate);
@@ -143,6 +144,6 @@ function sendQuotesToChannel(quotes, date) {
         allQuotes += element + "\n",
         console.log(element)
     });
-    client.channels.cache.get('1365698163096424593').send(`Quotes found on ${date}: \n ${allQuotes}`)
+    client.channels.cache.get(fingerSimmonsID).send(`Quotes found on ${date}: \n ${allQuotes}`)
 }
 
