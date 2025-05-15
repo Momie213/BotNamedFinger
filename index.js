@@ -1,24 +1,79 @@
-const { Client, Events, GatewayIntentBits } = require('discord.js');
+const { Client, Collection, Events, GatewayIntentBits} = require('discord.js');
 const { token } = require('./config.json');
 
 // Create a new client instance
-const client = new Client({ intents: [GatewayIntentBits.Guilds] });
+const discordClient = new Client({ intents: [GatewayIntentBits.Guilds] });
 
 // When the client is ready, run this code (only once).
 // The distinction between `client: Client<boolean>` and `readyClient: Client<true>` is important for TypeScript developers.
 // It makes some properties non-nullable.
-client.once(Events.ClientReady, readyClient => {
+discordClient.once(Events.ClientReady, readyClient => {
 	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 });
 
 // Log in to Discord with your client's token
-client.login(token);
-
-/*----------------------------------^Discord Bot^---------------------------------------- */
-/*--------------------------------^Google Docs API^---------------------------------------- */
+discordClient.login(token);
 
 const fingerSimmonsID = '1371488654677246013'
+const testingChannelID = '1365698163096424593'
 const mandemQuotesID = '1HnleC6fnhQDRynVGHI1QRg6BKKtDwjjOpKcCDLAoKLQ';
+const dc_fs = require('node:fs');
+const dc_path = require('node:path');
+//const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
+//const { token } = require('./config.json');
+
+//const discordClient = new Client({ intents: [GatewayIntentBits.Guilds] });
+discordClient.commands = new Collection();
+
+const foldersPath = dc_path.join(__dirname, 'commands');
+const commandFolders = dc_fs.readdirSync(foldersPath);
+
+for (const folder of commandFolders) {
+	const commandsPath = dc_path.join(foldersPath, folder);
+	const commandFiles = dc_fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+	for (const file of commandFiles) {
+		const filePath = dc_path.join(commandsPath, file);
+		const command = require(filePath);
+		// Set a new item in the Collection with the key as the command name and the value as the exported module
+		if ('data' in command && 'execute' in command) {
+			discordClient.commands.set(command.data.name, command);
+		} else {
+			console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+		}
+	}
+}
+
+/*
+client.on(Events.InteractionCreate, interaction => {
+	console.log(interaction);
+});
+*/
+discordClient.on(Events.InteractionCreate, async interaction => {
+	if (!interaction.isChatInputCommand()) {
+    return
+  };
+	const command = interaction.client.commands.get(interaction.commandName);
+
+  if (!command) {
+    console.error(`No command called ${interaction.commandName} was found.`);
+    return;
+  }
+
+  try {
+		await command.execute(interaction);
+	} catch (error) {
+		console.error(error);
+		if (interaction.replied || interaction.deferred) {
+			await interaction.followUp({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
+		} else {
+			await interaction.reply({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
+		}
+	}
+});
+
+
+/*----------------------------------^Discord Bot^---------------------------------------- */
+/*--------------------------------^Google Docs API^-------------------------------------- */
 const fs = require('fs').promises;
 const path = require('path');
 const process = require('process');
@@ -99,6 +154,7 @@ async function printDocTitle(auth) {
     const date = new Date()
     const day = date.getDate()
     const month = date.getMonth() + 1
+    //todaysDate = "2/1"; //Testing
     const todaysDate = day + '/' + month
     quotes = res.data.body.content.map(d=>d.paragraph?.elements[0].textRun.content);
     searchQuotes(quotes, todaysDate)
@@ -111,7 +167,7 @@ function checkTime() {
     let currTime = `${hrs}:${mins}`
     currTime = "00:00"
     console.log(currTime);
-    //todaysDate = "2/1"; //Testing
+    
     if (currTime === "00:00") {
         authorize().then(printDocTitle).catch(console.error);
     }
@@ -131,19 +187,21 @@ function searchQuotes(everyQuote, date) {
         }
     if (foundQuotes.length === 0) {
         console.log("No quotes said on " + date);
-        client.channels.cache.get(fingerSimmonsID).send(`No quotes said on ${date}`)
+        discordClient.channels.cache.get(testingChannelID).send(`No quotes said on ${date}`)
+        //discordClient.channels.cache.get(fingerSimmonsID).send(`No quotes said on ${date}`)
     }
     else {
-        sendQuotesToChannel(foundQuotes, todaysDate);
+        sendQuotesToChannel(foundQuotes, date);
     }
 } 
 
-function sendQuotesToChannel(quotes, date) {
+async function sendQuotesToChannel(quotes, date) {
     var allQuotes = "";
     quotes.forEach((element) => {
         allQuotes += element + "\n",
         console.log(element)
     });
-    client.channels.cache.get(fingerSimmonsID).send(`Quotes found on ${date}: \n ${allQuotes}`)
+    await discordClient.channels.cache.get(testingChannelID).send(`Quotes found on ${date}: \n ${allQuotes}`)
+    //discordClient.channels.cache.get(fingerSimmonsID).send(`Quotes said on ${date}: \n ${allQuotes}`)
 }
 
