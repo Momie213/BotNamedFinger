@@ -100,11 +100,16 @@ module.exports = {
         }
 
     function searchQuotes(everyQuote, name) {
+        foundQuotes = []
+        everyQuote.forEach(quote => { 
+            if (everyQuote[i] != undefined && everyQuote[i].includes(`- ${name}`)) {
+                foundQuotes.push(everyQuote[i]);
         let foundQuotes = []
         everyQuote.forEach(quote => { 
             if (quote != undefined && quote.includes(`- ${name}`)) {
                 foundQuotes.push(quote);
             }
+         });
          });
         if (foundQuotes.length === 0) {
             console.log("No quotes said by " + requestedName);
@@ -113,6 +118,7 @@ module.exports = {
             //discordClient.channels.cache.get(fingerSimmonsID).send(`No quotes said on ${date}`)
         }
         else {
+          sendQuotesToChannel(foundQuotes, requestedName);
           sendQuotesToChannel(foundQuotes, requestedName);
         }
     } 
