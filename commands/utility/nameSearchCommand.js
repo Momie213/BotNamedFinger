@@ -2,18 +2,6 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const { Client, Collection, Events, GatewayIntentBits} = require('discord.js');
 const mandemQuotesID = '1HnleC6fnhQDRynVGHI1QRg6BKKtDwjjOpKcCDLAoKLQ';
 
-//Example command
-/*
-module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('ping')
-		.setDescription('Replies with Pong!'),
-	async execute(interaction) {
-		await interaction.reply('Pong!');
-	},
-};
-*/
-
 const discordClient = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.MessageContent] });
 
 module.exports = {
@@ -113,10 +101,11 @@ module.exports = {
 
     function searchQuotes(everyQuote, name) {
         foundQuotes = []
-        for(i = 0; i<everyQuote.length; i++)    
+        everyQuote.forEach(quote => { 
             if (everyQuote[i] != undefined && everyQuote[i].includes(`- ${name}`)) {
                 foundQuotes.push(everyQuote[i]);
             }
+         });
         if (foundQuotes.length === 0) {
             console.log("No quotes said by " + requestedName);
             interaction.reply(`No quotes said by ${requestedName}`)
@@ -124,7 +113,7 @@ module.exports = {
             //discordClient.channels.cache.get(fingerSimmonsID).send(`No quotes said on ${date}`)
         }
         else {
-        sendQuotesToChannel(foundQuotes, requestedName);
+          sendQuotesToChannel(foundQuotes, requestedName);
         }
     } 
 
@@ -135,9 +124,12 @@ module.exports = {
             allQuotes += element + "\n",
             console.log(element)
         });
-        interaction.reply(`All quotes said by ${name}: \n ${allQuotes}`);
-        
-        
+        interaction.reply(`All quotes said by ${name}: \n`);
+
+        if (allQuotes.length > 1500) {
+          
+        }
+
         //discordClient.channels.cache.get(testingChannelID).send(`Quotes found on ${date}: \n ${allQuotes}`)
         //discordClient.channels.cache.get(fingerSimmonsID).send(`Quotes found on ${date}: \n ${allQuotes}`)
     }    
