@@ -100,17 +100,12 @@ module.exports = {
         }
 
     function searchQuotes(everyQuote, name) {
-        foundQuotes = []
-        everyQuote.forEach(quote => { 
-            if (everyQuote[i] != undefined && everyQuote[i].includes(`- ${name}`)) {
-                foundQuotes.push(everyQuote[i]);
         let foundQuotes = []
         everyQuote.forEach(quote => { 
             if (quote != undefined && quote.includes(`- ${name}`)) {
                 foundQuotes.push(quote);
             }
          });
-        }});
         if (foundQuotes.length === 0) {
             console.log("No quotes said by " + requestedName);
             interaction.reply(`No quotes said by ${requestedName}`)
@@ -118,7 +113,6 @@ module.exports = {
             //discordClient.channels.cache.get(fingerSimmonsID).send(`No quotes said on ${date}`)
         }
         else {
-          sendQuotesToChannel(foundQuotes, requestedName);
           sendQuotesToChannel(foundQuotes, requestedName);
         }
     } 
@@ -146,11 +140,11 @@ module.exports = {
         }
 
       //interaction.reply(`All quotes said by ${name}: \n ${quotes}`);
-      await interaction.reply(`All quotes said by ${name}:\n ${msgChunks[0].join('')}`);
+      await interaction.reply(`All quotes said by ${name}:\n ${msgChunks[0]}`);
 
       for (let i = 1; i < msgChunks.length; i++) {
         if (msgChunks[i].length > 0 ) {
-          await interaction.followUp(msgChunks[i].join(''));
+          await interaction.followUp(msgChunks[i]);
         }
       }
 
