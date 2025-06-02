@@ -140,11 +140,11 @@ module.exports = {
         }
 
       //interaction.reply(`All quotes said by ${name}: \n ${quotes}`);
-      await interaction.reply(`All quotes said by ${name}:\n ${msgChunks[0]}`);
+      await interaction.reply(`All quotes said by ${name}:\n ${msgChunks[0].join('')}}`);
 
       for (let i = 1; i < msgChunks.length; i++) {
         if (msgChunks[i].length > 0 ) {
-          await interaction.followUp(msgChunks[i]);
+          await interaction.followUp(msgChunks[i].join(''));
         }
       }
 
