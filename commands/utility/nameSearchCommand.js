@@ -110,7 +110,7 @@ module.exports = {
                 foundQuotes.push(quote);
             }
          });
-         });
+        }});
         if (foundQuotes.length === 0) {
             console.log("No quotes said by " + requestedName);
             interaction.reply(`No quotes said by ${requestedName}`)
