@@ -2,18 +2,6 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const { Client, Collection, Events, GatewayIntentBits} = require('discord.js');
 const mandemQuotesID = '1HnleC6fnhQDRynVGHI1QRg6BKKtDwjjOpKcCDLAoKLQ';
 
-//Example command
-/*
-module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('ping')
-		.setDescription('Replies with Pong!'),
-	async execute(interaction) {
-		await interaction.reply('Pong!');
-	},
-};
-*/
-
 const discordClient = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.MessageContent] });
 
 module.exports = {
@@ -112,11 +100,12 @@ module.exports = {
         }
 
     function searchQuotes(everyQuote, name) {
-        foundQuotes = []
-        for(i = 0; i<everyQuote.length; i++)    
-            if (everyQuote[i] != undefined && everyQuote[i].includes(`- ${name}`)) {
-                foundQuotes.push(everyQuote[i]);
+        let foundQuotes = []
+        everyQuote.forEach(quote => { 
+            if (quote != undefined && quote.includes(`- ${name}`)) {
+                foundQuotes.push(quote);
             }
+         });
         if (foundQuotes.length === 0) {
             console.log("No quotes said by " + requestedName);
             interaction.reply(`No quotes said by ${requestedName}`)
@@ -124,22 +113,43 @@ module.exports = {
             //discordClient.channels.cache.get(fingerSimmonsID).send(`No quotes said on ${date}`)
         }
         else {
-        sendQuotesToChannel(foundQuotes, requestedName);
+          sendQuotesToChannel(foundQuotes, requestedName);
         }
     } 
 
-    var allQuotes = "";
-    function sendQuotesToChannel(quotes, name) {
-        //var allQuotes = "";
-        quotes.forEach((element) => {
-            allQuotes += element + "\n",
-            console.log(element)
+    async function sendQuotesToChannel(quotes, name) {       
+        let maxMsgLen = 1800;
+        let msgChunks = [];
+        let currChunk = [];
+        let currLen = 0;
+
+        quotes.forEach(quote => { //For each quote in array
+          console.log(msgChunks); 
+          const lineBreakQuote = quote + "\n";
+          if (currLen + lineBreakQuote.length > maxMsgLen) {
+            msgChunks.push(currChunk);
+            currChunk = [];
+            currLen = 0;
+          }
+          currChunk.push(lineBreakQuote);
+          currLen += lineBreakQuote.length;
         });
-        interaction.reply(`All quotes said by ${name}: \n ${allQuotes}`);
-        
-        
-        //discordClient.channels.cache.get(testingChannelID).send(`Quotes found on ${date}: \n ${allQuotes}`)
-        //discordClient.channels.cache.get(fingerSimmonsID).send(`Quotes found on ${date}: \n ${allQuotes}`)
+
+        if (currChunk.length > 0) {
+          msgChunks.push(currChunk);
+        }
+
+      //interaction.reply(`All quotes said by ${name}: \n ${quotes}`);
+      await interaction.reply(`All quotes said by ${name}:\n ${msgChunks[0].join('')}`);
+
+      for (let i = 1; i < msgChunks.length; i++) {
+        if (msgChunks[i].length > 0 ) {
+          await interaction.followUp(msgChunks[i].join(''));
+        }
+      }
+
+      //discordClient.channels.cache.get(testingChannelID).send(`Quotes found on ${date}: \n ${allQuotes}`)
+      //discordClient.channels.cache.get(fingerSimmonsID).send(`Quotes found on ${date}: \n ${allQuotes}`)
     }    
     const auth = await authorize();
     await printDocTitle(auth);

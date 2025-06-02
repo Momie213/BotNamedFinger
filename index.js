@@ -73,7 +73,7 @@ discordClient.on(Events.InteractionCreate, async interaction => {
 
 
 /*----------------------------------^Discord Bot^---------------------------------------- */
-/*--------------------------------^Google Docs API^-------------------------------------- */
+/*--------------------------------vGoogle Docs APIv-------------------------------------- */
 const fs = require('fs').promises;
 const path = require('path');
 const process = require('process');
@@ -181,10 +181,12 @@ function searchQuotes(everyQuote, date) {
     let dateRegexp = new RegExp(`\\b${date}\\b`)
 
     foundQuotes = []
-    for(i = 0; i<everyQuote.length; i++)    
-        if (everyQuote[i] != undefined && dateRegexp.test(everyQuote[i])) {
+    everyQuote.forEach(quote => {   
+        if (quote != undefined && dateRegexp.test(quote)) {
             foundQuotes.push(everyQuote[i]);
         }
+      });
+  
     if (foundQuotes.length === 0) {
         console.log("No quotes said on " + date);
         discordClient.channels.cache.get(testingChannelID).send(`No quotes said on ${date}`)
@@ -202,6 +204,6 @@ async function sendQuotesToChannel(quotes, date) {
         console.log(element)
     });
     await discordClient.channels.cache.get(testingChannelID).send(`Quotes found on ${date}: \n ${allQuotes}`)
-    //discordClient.channels.cache.get(fingerSimmonsID).send(`Quotes said on ${date}: \n ${allQuotes}`)
+    //await discordClient.channels.cache.get(fingerSimmonsID).send(`Quotes said on ${date}: \n ${allQuotes}`)
 }
 
