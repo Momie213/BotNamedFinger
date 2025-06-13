@@ -190,7 +190,7 @@ function searchQuotes(everyQuote, date) {
     if (foundQuotes.length === 0) {
         console.log("No quotes said on " + date);
         discordClient.channels.cache.get(testingChannelID).send(`No quotes said on ${date}`)
-        //discordClient.channels.cache.get(fingerSimmonsID).send(`No quotes said on ${date}`)
+        discordClient.channels.cache.get(fingerSimmonsID).send(`No quotes said on ${date}`)
     }
     else {
         sendQuotesToChannel(foundQuotes, date);
@@ -204,6 +204,6 @@ async function sendQuotesToChannel(quotes, date) {
         console.log(element)
     });
     await discordClient.channels.cache.get(testingChannelID).send(`Quotes found on ${date}: \n ${allQuotes}`)
-    //await discordClient.channels.cache.get(fingerSimmonsID).send(`Quotes said on ${date}: \n ${allQuotes}`)
+    await discordClient.channels.cache.get(fingerSimmonsID).send(`Quotes said on ${date}: \n ${allQuotes}`)
 }
 

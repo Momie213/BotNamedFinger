@@ -148,8 +148,6 @@ module.exports = {
         }
       }
 
-      //discordClient.channels.cache.get(testingChannelID).send(`Quotes found on ${date}: \n ${allQuotes}`)
-      //discordClient.channels.cache.get(fingerSimmonsID).send(`Quotes found on ${date}: \n ${allQuotes}`)
     }    
     const auth = await authorize();
     await printDocTitle(auth);
