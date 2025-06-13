@@ -207,3 +207,4 @@ async function sendQuotesToChannel(quotes, date) {
     await discordClient.channels.cache.get(fingerSimmonsID).send(`Quotes said on ${date}: \n ${allQuotes}`)
 }
 
+ 
