@@ -81,7 +81,7 @@ const {authenticate} = require('@google-cloud/local-auth');
 const {google} = require('googleapis');
 
 // If modifying these scopes, delete token.json.
-const SCOPES = ['https://www.googleapis.com/auth/documents.readonly'];
+const SCOPES = ['https://www.googleapis.com/auth/documents'];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
@@ -183,14 +183,14 @@ function searchQuotes(everyQuote, date) {
     foundQuotes = []
     everyQuote.forEach(quote => {   
         if (quote != undefined && dateRegexp.test(quote)) {
-            foundQuotes.push(everyQuote[i]);
+            foundQuotes.push(quote);
         }
       });
   
     if (foundQuotes.length === 0) {
         console.log("No quotes said on " + date);
         discordClient.channels.cache.get(testingChannelID).send(`No quotes said on ${date}`)
-        discordClient.channels.cache.get(fingerSimmonsID).send(`No quotes said on ${date}`)
+        //discordClient.channels.cache.get(fingerSimmonsID).send(`No quotes said on ${date}`)
     }
     else {
         sendQuotesToChannel(foundQuotes, date);
@@ -204,7 +204,7 @@ async function sendQuotesToChannel(quotes, date) {
         console.log(element)
     });
     await discordClient.channels.cache.get(testingChannelID).send(`Quotes found on ${date}: \n ${allQuotes}`)
-    await discordClient.channels.cache.get(fingerSimmonsID).send(`Quotes said on ${date}: \n ${allQuotes}`)
+    //await discordClient.channels.cache.get(fingerSimmonsID).send(`Quotes said on ${date}: \n ${allQuotes}`)
 }
 
  

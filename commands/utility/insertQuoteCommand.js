@@ -7,7 +7,7 @@ const discordClient = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIn
 module.exports = {
     data: new SlashCommandBuilder() 
         .setName('insertquote')
-        .setDescription('Search for any quotes by the specified person')
+        .setDescription('Add a quote into the quote book')
         .addStringOption(option =>
 		option.setName('quote')
 			.setDescription('The quote that was said')
@@ -20,7 +20,6 @@ module.exports = {
     async execute(interaction) {
         const requestedName = interaction.options.getString('name');
         const quote = interaction.options.getString('quote');
-
         const fs = require('fs').promises;
         const path = require('path');
         const process = require('process');
@@ -93,6 +92,37 @@ module.exports = {
          * https://docs.google.com/document/d/195j9eDD3ccgjQRttHhJPymLJUCOUjs-jmwTrekvdjFE/edit
          * @param {google.auth.OAuth2} auth The authenticated Google OAuth 2.0 client.
          */
+
+        async function insertQuote(auth) {
+          const docs = google.docs({version: 'v1', auth});
+          const res = await docs.documents.get({
+            documentId: mandemQuotesID,
+          });
+            const date = new Date()
+            const day = date.getDate()
+            const month = date.getMonth() + 1
+            const year = date.getFullYear()
+            const todaysDate = day + '/' + month + '/' + year;
+            quoteBookEnd= res.data.body.content[res.data.body.content.length - 1].endIndex;
+
+          await docs.documents.batchUpdate({
+            documentId: mandemQuotesID,
+            requestBody: {
+              requests: [
+                {
+                  insertText: {
+                    location: {index: quoteBookEnd - 1},
+                    text: `\n"${quote}" - ${requestedName} (${todaysDate})`
+                  }
+                }
+              
+            ]}
+          })
+
+          }
+          const auth = await authorize();
+          await insertQuote(auth);
+          await interaction.reply({content: `Quote: ${quote} successfully added!`})
   }
 }
     

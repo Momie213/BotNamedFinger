@@ -14,6 +14,7 @@ module.exports = {
             .setRequired(true)),
 
     async execute(interaction) {
+        await interaction.deferReply();
         const requestedName = interaction.options.getString('name');
     
         const fs = require('fs').promises;
@@ -90,6 +91,19 @@ module.exports = {
          */
         
     
+
+        /*
+        ATM THIS DOES WORK BUT THERE ARE A FEW ISSUES
+        ---
+        CURRENT ISSUES WITH THIS:
+        Multi-line quotes only check for one line above rather than continously check for more lines
+        (Can be fixed by checking if a line above is empty, if it is carry on, else keep checking for further non empty lines)
+
+        Headings are sent to the chat when its the first quote of that month -> this causes weird spacing between quotes sometimes
+        */
+
+
+        
         async function printDocTitle(auth) {
           const docs = google.docs({version: 'v1', auth});
           const res = await docs.documents.get({
@@ -100,10 +114,16 @@ module.exports = {
         }
 
     function searchQuotes(everyQuote, name) {
-        let foundQuotes = []
-        everyQuote.forEach(quote => { 
-            if (quote != undefined && quote.includes(`- ${name}`)) {
+        let foundQuotes = [];
+        everyQuote.forEach((quote, i) => { 
+            if (quote != undefined && (quote.includes(`- ${name}`) || quote.includes(`and ${name}`))) {
+              if (i > 0 && everyQuote[i-1].length > 0) {
+                foundQuotes.push(everyQuote[i-1]);
+                foundQuotes.push(quote + "\n");           
+              } 
+              else {
                 foundQuotes.push(quote);
+              }
             }
          });
         if (foundQuotes.length === 0) {
@@ -125,7 +145,7 @@ module.exports = {
 
         quotes.forEach(quote => { //For each quote in array
           console.log(msgChunks); 
-          const lineBreakQuote = quote + "\n";
+          const lineBreakQuote = quote;
           if (currLen + lineBreakQuote.length > maxMsgLen) {
             msgChunks.push(currChunk);
             currChunk = [];
@@ -140,7 +160,7 @@ module.exports = {
         }
 
       //interaction.reply(`All quotes said by ${name}: \n ${quotes}`);
-      await interaction.reply(`All quotes said by ${name}:\n ${msgChunks[0].join('')}}`);
+      await interaction.editReply(`All quotes said by ${name}:\n ${msgChunks[0].join('')}`);
 
       for (let i = 1; i < msgChunks.length; i++) {
         if (msgChunks[i].length > 0 ) {
@@ -152,5 +172,4 @@ module.exports = {
     const auth = await authorize();
     await printDocTitle(auth);
     }, 
-    
 };

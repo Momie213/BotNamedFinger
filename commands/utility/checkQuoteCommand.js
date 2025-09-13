@@ -1,6 +1,8 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { Client, Collection, Events, GatewayIntentBits} = require('discord.js');
 const mandemQuotesID = '1HnleC6fnhQDRynVGHI1QRg6BKKtDwjjOpKcCDLAoKLQ';
+const testingChannelID = '1365698163096424593'
+
 
 //Example command
 /*
@@ -19,7 +21,7 @@ const discordClient = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIn
 module.exports = {
     data: new SlashCommandBuilder() 
         .setName('datesearch')
-        .setDescription('Search for any quotes on a specified date')
+        .setDescription('Search for any quotes on a specified date (DD/MM or DD/MM/YYYY format)')
         .addStringOption(option =>
 		option.setName('date')
 			.setDescription('The date to be searched')
@@ -114,35 +116,20 @@ module.exports = {
         }
 
     async function searchQuotes(everyQuote, date) {
-        let dateRegexp = new RegExp(`\\b${date}\\b`)
+        let dateRegexp = new RegExp(`\\b${date}\\b`);
+
 
         foundQuotes = []
-
-    /* -ChatGPT solution lmao
-        const escapedDate = dateInput.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
-        let dateRegexp;
-
-    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateInput)) {
-        // Format: day/month/year (exact match)
-        // Match e.g. (2/1/2024)
-        dateRegexp = new RegExp(`\\(${escapedDate}\\)`);
-    } else if (/^\d{1,2}\/\d{1,2}$/.test(dateInput)) {
-        // Format: day/month (any year)
-        // Match e.g. (2/1/2023), (2/1/2024)
-        dateRegexp = new RegExp(`\\(${escapedDate}/\\d{4}\\)`);
-    } else {
-        interaction.reply("Invalid date format. Use `day/month` or `day/month/year` (e.g. `2/1` or `2/1/2024`).");
-        return;
-    }
-
-    const foundQuotes = everyQuote.filter(q => q && dateRegexp.test(q));
-        
-    */
-    
-        for(i = 0; i<everyQuote.length; i++)    
-            if (everyQuote[i] != undefined && (dateRegexp.test(everyQuote[i]) || everyQuote[i].includes(date))) {
-                foundQuotes.push(everyQuote[i]);
-            }
+        everyQuote.forEach((quote, i) => {
+            if (quote != undefined && dateRegexp.test(quote)) {
+                if (i>0 && everyQuote[i-1].length>0) {
+                  foundQuotes.push(everyQuote[i-1]);
+                  foundQuotes.push(quote);
+                }
+                else {
+                  foundQuotes.push(quote);
+                }
+            }})
 
         if (foundQuotes.length === 0) {
             console.log("No quotes said on " + date);
@@ -151,7 +138,7 @@ module.exports = {
             //discordClient.channels.cache.get(fingerSimmonsID).send(`No quotes said on ${date}`)
         }
         else {
-        sendQuotesToChannel(foundQuotes, date);
+            sendQuotesToChannel(foundQuotes, date);
         }
     } 
 
@@ -169,6 +156,5 @@ module.exports = {
     }    
     const auth = await authorize();
     await printDocTitle(auth);
-    }, 
-    
+    },  
 };
