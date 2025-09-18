@@ -112,7 +112,7 @@ module.exports = {
                 {
                   insertText: {
                     location: {index: quoteBookEnd - 1},
-                    text: `\n"${quote}" - ${requestedName} (${todaysDate})`
+                    text: `\n\n"${quote}" - ${requestedName} (${todaysDate})`
                   }
                 }
               
@@ -122,7 +122,7 @@ module.exports = {
           }
           const auth = await authorize();
           await insertQuote(auth);
-          await interaction.reply({content: `Quote: ${quote} successfully added!`})
+          await interaction.reply(`Quote: ${quote} successfully added!`)
   }
 }
     

@@ -90,19 +90,6 @@ module.exports = {
          * @param {google.auth.OAuth2} auth The authenticated Google OAuth 2.0 client.
          */
         
-    
-
-        /*
-        ATM THIS DOES WORK BUT THERE ARE A FEW ISSUES
-        ---
-        CURRENT ISSUES WITH THIS:
-        Multi-line quotes only check for one line above rather than continously check for more lines
-        (Can be fixed by checking if a line above is empty, if it is carry on, else keep checking for further non empty lines)
-
-        Headings are sent to the chat when its the first quote of that month -> this causes weird spacing between quotes sometimes
-        */
-
-
         
         async function printDocTitle(auth) {
           const docs = google.docs({version: 'v1', auth});
@@ -116,21 +103,23 @@ module.exports = {
     function searchQuotes(everyQuote, name) {
         let foundQuotes = [];
         everyQuote.forEach((quote, i) => { 
-            if (quote != undefined && (quote.includes(`- ${name}`) || quote.includes(`and ${name}`))) {
-              if (i > 0 && everyQuote[i-1].length > 0) {
-                foundQuotes.push(everyQuote[i-1]);
-                foundQuotes.push(quote + "\n");           
-              } 
-              else {
-                foundQuotes.push(quote);
+            multilineQuote = [];
+            if (quote != undefined && (quote.includes(`- ${name}`) || quote.includes(`and ${name}`)) && everyQuote[i-1].length > 0) {
+              let j = i;
+              console.log(quote)
+              while (j>0 && everyQuote[j] && everyQuote[j].trim().length > 0) {
+                multilineQuote.push(everyQuote[j]);
+                j--;
               }
+              foundQuotes.push(multilineQuote.reverse().join('') + "\n");
             }
-         });
+            else if (quote != undefined && (quote.includes(`- ${name}`) || quote.includes(`and ${name}`))) {
+              foundQuotes.push(quote + "\n" + "\n");
+            }
+          });
         if (foundQuotes.length === 0) {
             console.log("No quotes said by " + requestedName);
             interaction.reply(`No quotes said by ${requestedName}`)
-            //discordClient.channels.cache.get(testingChannelID).send(`No quotes said on ${date}`)
-            //discordClient.channels.cache.get(fingerSimmonsID).send(`No quotes said on ${date}`)
         }
         else {
           sendQuotesToChannel(foundQuotes, requestedName);
@@ -143,7 +132,7 @@ module.exports = {
         let currChunk = [];
         let currLen = 0;
 
-        quotes.forEach(quote => { //For each quote in array
+        quotes.forEach(quote => { 
           console.log(msgChunks); 
           const lineBreakQuote = quote;
           if (currLen + lineBreakQuote.length > maxMsgLen) {

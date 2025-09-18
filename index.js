@@ -177,6 +177,13 @@ function checkTime() {
 checkTime()
 //setInterval(checkTime, 60000)
 
+ /*
+ATM EVERY COMMAND DOES WORK BUT THERE ARE A FEW ISSUES
+---
+CURRENT ISSUES WITH THIS:
+Headings are sent to the chat when its the first quote of that month -> this causes weird spacing between quotes sometimes
+*/
+
 function searchQuotes(everyQuote, date) {
     let dateRegexp = new RegExp(`\\b${date}\\b`)
 

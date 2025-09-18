@@ -117,19 +117,21 @@ module.exports = {
 
     async function searchQuotes(everyQuote, date) {
         let dateRegexp = new RegExp(`\\b${date}\\b`);
-
-
-        foundQuotes = []
+        let foundQuotes = []
         everyQuote.forEach((quote, i) => {
-            if (quote != undefined && dateRegexp.test(quote)) {
-                if (i>0 && everyQuote[i-1].length>0) {
-                  foundQuotes.push(everyQuote[i-1]);
-                  foundQuotes.push(quote);
-                }
-                else {
-                  foundQuotes.push(quote);
-                }
-            }})
+          multilineQuote = [];
+            if (quote != undefined && dateRegexp.test(quote) && everyQuote[i-1].length > 0) {
+              let j=i;
+              while (j>0 && everyQuote[j] && everyQuote[j].trim().length > 0) {
+                multilineQuote.push(everyQuote[j]);
+                j--;
+              }
+              foundQuotes.push(multilineQuote.reverse().join('')); 
+              }
+              else if (quote != undefined && dateRegexp.test(quote)) {
+                foundQuotes.push(quote + "\n");
+            }
+          });
 
         if (foundQuotes.length === 0) {
             console.log("No quotes said on " + date);
