@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder, quote } = require("discord.js");
 const { Client, Collection, Events, GatewayIntentBits} = require('discord.js');
 const mandemQuotesID = '1HnleC6fnhQDRynVGHI1QRg6BKKtDwjjOpKcCDLAoKLQ';
 
@@ -96,15 +96,21 @@ module.exports = {
           const res = await docs.documents.get({
             documentId: mandemQuotesID,
           });
-            quotes = res.data.body.content.map(d=>d.paragraph?.elements[0].textRun.content);
+            //quotes = res.data.body.content.map(d=>d.paragraph?.elements[0].textRun.content);
+            quotes = res.data.body.content
+            .filter(d => d.paragraph?.paragraphStyle?.namedStyleType !== 'HEADING_2')
+            .map(d => d.paragraph?.elements?.map(e => e.textRun?.content).join(''))
+            .filter(Boolean);
             searchQuotes(quotes, requestedName)
         }
 
     function searchQuotes(everyQuote, name) {
         let foundQuotes = [];
+        let quoteCounter = 0;
         everyQuote.forEach((quote, i) => { 
             multilineQuote = [];
             if (quote != undefined && (quote.includes(`- ${name}`) || quote.includes(`and ${name}`)) && everyQuote[i-1].length > 0) {
+              quoteCounter++;
               let j = i;
               console.log(quote)
               while (j>0 && everyQuote[j] && everyQuote[j].trim().length > 0) {
@@ -114,6 +120,7 @@ module.exports = {
               foundQuotes.push(multilineQuote.reverse().join('') + "\n");
             }
             else if (quote != undefined && (quote.includes(`- ${name}`) || quote.includes(`and ${name}`))) {
+              quoteCounter++;
               foundQuotes.push(quote + "\n" + "\n");
             }
           });
@@ -122,11 +129,11 @@ module.exports = {
             interaction.reply(`No quotes said by ${requestedName}`)
         }
         else {
-          sendQuotesToChannel(foundQuotes, requestedName);
+          sendQuotesToChannel(foundQuotes, requestedName, quoteCounter);
         }
     } 
 
-    async function sendQuotesToChannel(quotes, name) {       
+    async function sendQuotesToChannel(quotes, name, quoteCount) {       
         let maxMsgLen = 1800;
         let msgChunks = [];
         let currChunk = [];
@@ -149,7 +156,7 @@ module.exports = {
         }
 
       //interaction.reply(`All quotes said by ${name}: \n ${quotes}`);
-      await interaction.editReply(`All quotes said by ${name}:\n ${msgChunks[0].join('')}`);
+      await interaction.editReply(`All quotes said by ${name} (${quoteCount}):\n ${msgChunks[0].join('')}`);
 
       for (let i = 1; i < msgChunks.length; i++) {
         if (msgChunks[i].length > 0 ) {

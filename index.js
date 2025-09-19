@@ -64,9 +64,9 @@ discordClient.on(Events.InteractionCreate, async interaction => {
 	} catch (error) {
 		console.error(error);
 		if (interaction.replied || interaction.deferred) {
-			await interaction.followUp({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
+			await interaction.followUp({ content: 'There was an error while executing this command!'});
 		} else {
-			await interaction.reply({ content: 'There was an error while executing this command!', flags: MessageFlags.Ephemeral });
+			await interaction.reply({ content: 'There was an error while executing this command!'});
 		}
 	}
 });
@@ -165,7 +165,7 @@ function checkTime() {
     let hrs = date.getHours()
     let mins = date.getMinutes()
     let currTime = `${hrs}:${mins}`
-    currTime = "00:00"
+    //currTime = "00:00"
     console.log(currTime);
     
     if (currTime === "00:00") {
@@ -174,14 +174,18 @@ function checkTime() {
     else (console.log("Not midnight yet"));
 }
 
-checkTime()
-//setInterval(checkTime, 60000)
+//checkTime()
+setInterval(checkTime, 60000)
 
  /*
 ATM EVERY COMMAND DOES WORK BUT THERE ARE A FEW ISSUES
 ---
 CURRENT ISSUES WITH THIS:
-Headings are sent to the chat when its the first quote of that month -> this causes weird spacing between quotes sometimes
+/namesearch will find non-exact matches (e.g searching for D will show quotes from Dan and Declan)
+
+IDEAS:
+- Allow people to search a range of dates (probably won't add this as people won't use it)
+- Automatically add headings for current month if not already there (with correct styling)
 */
 
 function searchQuotes(everyQuote, date) {
@@ -197,7 +201,7 @@ function searchQuotes(everyQuote, date) {
     if (foundQuotes.length === 0) {
         console.log("No quotes said on " + date);
         discordClient.channels.cache.get(testingChannelID).send(`No quotes said on ${date}`)
-        //discordClient.channels.cache.get(fingerSimmonsID).send(`No quotes said on ${date}`)
+        discordClient.channels.cache.get(fingerSimmonsID).send(`No quotes said on ${date}`)
     }
     else {
         sendQuotesToChannel(foundQuotes, date);
@@ -211,7 +215,7 @@ async function sendQuotesToChannel(quotes, date) {
         console.log(element)
     });
     await discordClient.channels.cache.get(testingChannelID).send(`Quotes found on ${date}: \n ${allQuotes}`)
-    //await discordClient.channels.cache.get(fingerSimmonsID).send(`Quotes said on ${date}: \n ${allQuotes}`)
+    await discordClient.channels.cache.get(fingerSimmonsID).send(`Quotes said on ${date}: \n ${allQuotes}`)
 }
 
  
