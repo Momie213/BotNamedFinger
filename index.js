@@ -171,7 +171,7 @@ function checkTime() {
     if (currTime === "0:0") {
         authorize().then(printDocTitle).catch(console.error);
     }
-    else (console.log("Not midnight yet"));
+    //else (console.log("Not midnight yet"));
 }
 
 //checkTime()
