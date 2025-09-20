@@ -168,7 +168,7 @@ function checkTime() {
     //currTime = "00:00"
     console.log(currTime);
     
-    if (currTime === "00:00") {
+    if (currTime === "0:0") {
         authorize().then(printDocTitle).catch(console.error);
     }
     else (console.log("Not midnight yet"));
