@@ -112,7 +112,7 @@ module.exports = {
                 {
                   insertText: {
                     location: {index: quoteBookEnd - 1},
-                    text: `\n\n"${quote}" - ${requestedName} (${todaysDate})`
+                    text: `\n"${quote}" - ${requestedName} (${todaysDate})`
                   }
                 }
               
