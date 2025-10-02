@@ -187,6 +187,7 @@ IDEAS:
 - Allow people to search a range of dates (probably won't add this as people won't use it)
 - Automatically add headings for current month if not already there (with correct styling)
 - Leaderboard command that shows how many quotes everyone has 
+- /latestquote command
 */
 
 function searchQuotes(everyQuote, date) {
