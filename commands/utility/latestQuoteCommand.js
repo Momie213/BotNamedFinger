@@ -86,7 +86,6 @@ module.exports = {
          * @param {google.auth.OAuth2} auth The authenticated Google OAuth 2.0 client.
          */
         
-        
         async function printDocTitle(auth) {
           const docs = google.docs({version: 'v1', auth});
           const res = await docs.documents.get({
@@ -96,14 +95,21 @@ module.exports = {
             let quotes = res.data.body.content
             .filter(d => d.paragraph?.paragraphStyle?.namedStyleType !== 'HEADING_2')
             .map(d => d.paragraph?.elements?.map(e => e.textRun?.content).join(''))
-            .filter(Boolean);
+            .filter(Boolean)
             searchQuotes(quotes)
         }
 
     function searchQuotes(everyQuote) {
-        let lastQuote = everyQuote[everyQuote.length-1];
-        sendQuotesToChannel(lastQuote)
-    } 
+        x = 1
+        let lastQuote = everyQuote[everyQuote.length-x];
+        if (lastQuote != null) {
+          sendQuotesToChannel(lastQuote)
+        }
+        else {
+          x+=1
+          lastQuote = everyQuote[everyQuote.length-x]
+        }
+      } 
 
     async function sendQuotesToChannel(quote) {       
       //interaction.reply(`All quotes said by ${name}: \n ${quotes}`);
