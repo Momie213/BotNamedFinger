@@ -100,14 +100,15 @@ module.exports = {
         }
 
     function searchQuotes(everyQuote) {
-        x = 1
+        let x = 1
         let lastQuote = everyQuote[everyQuote.length-x];
-        if (lastQuote != null) {
-          sendQuotesToChannel(lastQuote)
-        }
-        else {
-          x+=1
+        while (lastQuote == null || lastQuote.trim() === '') {
+          x++
           lastQuote = everyQuote[everyQuote.length-x]
+        }   
+        
+        if (lastQuote != null || lastQuote.trim() === '') {
+            sendQuotesToChannel(lastQuote)
         }
       } 
 
