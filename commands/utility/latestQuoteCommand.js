@@ -100,6 +100,7 @@ module.exports = {
         }
 
     function searchQuotes(everyQuote) {
+        let multQuote = [];
         let x = 1
         let lastQuote = everyQuote[everyQuote.length-x];
         while (lastQuote == null || lastQuote.trim() === '') {
@@ -107,14 +108,20 @@ module.exports = {
           lastQuote = everyQuote[everyQuote.length-x]
         }   
         
-        if (lastQuote != null || lastQuote.trim() === '') {
-            sendQuotesToChannel(lastQuote)
+        moveFrom = everyQuote.length-x;
+        if (lastQuote != null || lastQuote.trim() !== '') {
+            while(everyQuote[moveFrom] != null && everyQuote[moveFrom].trim() !== '') {
+              multQuote.push(everyQuote[moveFrom]);
+              moveFrom--;
+            }
         }
+        multQuote.reverse();
+        sendQuotesToChannel(multQuote.join(''));
       } 
 
     async function sendQuotesToChannel(quote) {       
       //interaction.reply(`All quotes said by ${name}: \n ${quotes}`);
-      await interaction.editReply(`Latest quote: ${quote}`);
+      await interaction.editReply(`Latest quote:\n${quote}`);
     }    
     const auth = await authorize();
     await printDocTitle(auth);
